@@ -3,6 +3,88 @@
 > **Note:** This repository is a modified fork of the [original NVIDIA PyCuVSLAM repository](https://github.com/NVlabs/pycuvslam). 
 > It contains custom integrations and tests for additional cameras (e.g., Orbbec Gemini 2) and datasets that are not currently available in the upstream version.
 
+## Orbbec Gemini 2 Support (reComputer / Jetson)
+
+This fork adds specific support for the **Orbbec Gemini 2** camera, particularly for **Seeed Studio reComputer** (Jetson) platforms.
+
+### Prerequisites
+
+*   **Hardware**: reComputer (Jetson Orin/Nano) with Jetpack 6.2
+*   **Camera**: Orbbec Gemini 2 or Gemini 2 L
+*   **Software**: ROS2 Humble (recommended for calibration)
+
+### Installation Guide
+
+#### 1. Install Orbbec Python SDK (pyorbbecsdk)
+
+The Python SDK is required to run the `examples/orbbec_gemini2l` scripts. It must be built from source on Jetson.
+
+```bash
+# 1. Install pybind11
+pip install pybind11
+
+# 2. Clone the repository
+git clone https://github.com/orbbec/pyorbbecsdk.git
+cd pyorbbecsdk
+pip install -r requirements.txt
+
+# 3. Build the project
+mkdir build && cd build
+cmake \
+  -Dpybind11_DIR=`pybind11-config --cmakedir` \
+  -DPython3_EXECUTABLE=`which python3` \
+  -DPython3_INCLUDE_DIR=/usr/include/python3.10 \
+  -DPython3_LIBRARY=/usr/lib/aarch64-linux-gnu/libpython3.10.so \
+  ..
+make -j4
+sudo make install
+cd ..
+
+# 4. Install the Python package
+pip install wheel
+python3 setup.py bdist_wheel
+pip install dist/*.whl
+
+# 5. Configure udev rules
+export PYTHONPATH=$PYTHONPATH:$(pwd)/install/lib/
+sudo bash ./scripts/install_udev_rules.sh
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+#### 2. Running RGB-D SLAM
+
+Once installed, you can run the provided example:
+
+```bash
+cd examples/orbbec_gemini2l
+python3 rgbd_slam.py --config ./gemini2_calibrated_config.yaml --resolution 640x400 --enable-distortion --enhance-depth --fast-depth
+```
+
+For more details on calibration and advanced setup, refer to the [Seeed Studio Wiki](https://wiki.seeedstudio.com/pycuvslam_recomputer_robotics/).
+
+## TUM RGB-D Dataset Support
+
+This example demonstrates how to run Mono-Depth Visual Odometry on the **TUM RGB-D Dataset** (specifically `freiburg3_long_office_household`).
+
+### Quickstart
+
+1.  **Prepare Dataset**:
+    Downloads and extracts the dataset, then configures the necessary calibration file.
+    ```bash
+    mkdir -p examples/tum/dataset
+    wget https://cvg.cit.tum.de/rgbd/dataset/freiburg3/rgbd_dataset_freiburg3_long_office_household.tgz -O examples/tum/dataset/dataset.tgz
+    tar -xzf examples/tum/dataset/dataset.tgz -C examples/tum/dataset
+    cp examples/tum/freiburg3_rig.yaml examples/tum/dataset/rgbd_dataset_freiburg3_long_office_household/freiburg3_rig.yaml
+    ```
+
+2.  **Run Tracking**:
+    ```bash
+    cd examples/tum
+    python3 track_tum.py
+    ```
+
+For detailed instructions, see [examples/tum/QUICKSTART_TUM.md](examples/tum/QUICKSTART_TUM.md).
+
 # PyCuVSLAM: CUDA-Accelerated Visual Odometry and Mapping
 
 ![Demo](pycuvslam.gif)
