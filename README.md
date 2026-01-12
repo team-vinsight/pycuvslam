@@ -1,3 +1,8 @@
+# PyCuVSLAM (Fork/Custom Integration)
+
+> **Note:** This repository is a modified fork of the [original NVIDIA PyCuVSLAM repository](https://github.com/NVlabs/pycuvslam). 
+> It contains custom integrations and tests for additional cameras (e.g., Orbbec Gemini 2) and datasets that are not currently available in the upstream version.
+
 # PyCuVSLAM: CUDA-Accelerated Visual Odometry and Mapping
 
 ![Demo](pycuvslam.gif)

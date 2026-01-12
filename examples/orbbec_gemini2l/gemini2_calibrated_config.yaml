@@ -1,0 +1,38 @@
+# Gemini 2 Camera Calibration Configuration File
+
+image:
+  width: 640
+  height: 400
+
+# Camera intrinsic matrix (updated calibration parameters)
+# [fx  0  cx]
+# [ 0 fy  cy]
+# [ 0  0   1]
+camera_matrix:
+  fx: 302.67579
+  fy: 303.75590
+  cx: 317.69227
+  cy: 195.79704
+
+# Distortion coefficients (Brown-Conrady model) - updated calibration parameters
+# [k1, k2, p1, p2, k3]
+distortion_coefficients:
+  k1: -0.022606
+  k2: 0.016205
+  p1: 0.000696
+  p2: -0.001236
+  k3: 0.0
+
+# Depth camera to color camera transformation parameters (from ROS2 topics)
+# Used for depth-color alignment in RGBD SLAM
+depth_to_color_transform:
+  # Rotation matrix (3x3)
+  rotation:
+    - [0.9999980330467224, 0.0005175529513508081, 0.0019138390198349953]
+    - [-0.0005151802906766534, 0.9999991059303284, -0.0012400292325764894]
+    - [-0.0019144790712743998, 0.001239040750078857, 0.9999973773956299]
+  # Translation vector (3x1)
+  translation:
+    - -0.013858354568481446
+    - 0.0001548745185136795
+    - -0.00187313711643219
